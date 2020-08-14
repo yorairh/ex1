@@ -37,6 +37,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
 
 	//if the allocate failed
     if (pm->values == NULL) {
+        free(pm);
         return ERROR_FAILURE;
     }
     
@@ -44,6 +45,11 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
         pm->values[i] = (double*)malloc(width * sizeof(double));
         //if the allocate failed
         if (pm->values[i] == NULL) {
+            for (int k = 0; k < i; k++) {
+                free(pm->values[k]);
+            }
+            free(pm->values);
+            free(pm);
 		    return ERROR_FAILURE;
         }
 	}
