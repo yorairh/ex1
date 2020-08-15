@@ -31,6 +31,11 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
 	}
 
 	//allocating
+    if ((int)height <= 0 || (int)width <= 0) {
+        free(pm);
+        return ERROR_FAILURE;
+    }
+    
 	pm->height = (int)height;
     pm->width = (int)width;
 	pm->values = (double**)malloc(height * sizeof(double*));
@@ -72,7 +77,7 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
  * @return ErrorCode
  */
 ErrorCode matrix_copy(PMatrix* result, CPMatrix source) {
-    if (source == NULL) {
+    if (source == NULL || result == NULL) {
         return ERROR_FAILURE;
     }
     ErrorCode e = matrix_create(result, source->height, source->width);
@@ -81,7 +86,7 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source) {
     }
     //put the values
     for (int i = 0; i < source->height; i++) {
-        for (int j = 0; i < source->width; i++) {
+        for (int j = 0; j < source->width; j++) {
             e = matrix_setValue(*result, i, j, source->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
@@ -150,6 +155,9 @@ ErrorCode matrix_setValue(PMatrix matrix, uint32_t rowIndex, uint32_t colIndex, 
 if (matrix == NULL) {
     return ERROR_FAILURE;
 }
+if ((int)rowIndex < 0 || (int)rowIndex > matrix->height-1 || (int)colIndex < 0 || (int)colIndex > matrix->width-1) {
+    return ERROR_FAILURE;
+}
 int row = (int)rowIndex;
 int col = (int)colIndex;
 if ((col > matrix->width-1 || col < 0) || (row > matrix->height-1 || row < 0)) {
@@ -170,10 +178,14 @@ matrix->values[row][col] = value;
  * @return ErrorCode
  */
 ErrorCode matrix_getValue(CPMatrix matrix, uint32_t rowIndex, uint32_t colIndex, double* value) {
-    if (matrix == NULL) {
+    if (matrix == NULL || value == NULL) {
         return ERROR_FAILURE;
     }
-    *value = matrix->values[rowIndex][colIndex];
+    if ((int)rowIndex < 0 || (int)rowIndex > matrix->height-1 || (int)colIndex < 0 || (int)colIndex > matrix->width-1) {
+        return ERROR_FAILURE;
+    }
+    
+    *value = matrix->values[(int)rowIndex][(int)colIndex];
     return ERROR_SUCCESS;
 }
 
@@ -198,7 +210,7 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs) {
         return e;
     }
     for (int i = 0; i < lhs->height; i++) {
-        for (int j = 0; i < lhs->width; i++) {
+        for (int j = 0; j < lhs->width; j++) {
             e = matrix_setValue(*result, i, j, lhs->values[i][j] + rhs->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
@@ -256,7 +268,7 @@ ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar) {
         return ERROR_FAILURE;
     }
     for (int i = 0; i < matrix->height; i++) {
-        for (int j = 0; i < matrix->width; i++) {
+        for (int j = 0; j < matrix->width; j++) {
             ErrorCode e = matrix_setValue(matrix, i, j, scalar*matrix->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
