@@ -57,19 +57,19 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source) {
     if (source == NULL || result == NULL) {
         return ERROR_FAILURE_NULL;
     }
-    ErrorCode e = matrix_create(result, source->height, source->width);
-    if (!error_isSuccess(e)) {
-        return e;
+    ErrorCode code = matrix_create(result, source->height, source->width);
+    if (!error_isSuccess(code)) {
+        return code;
     }
     for (int i = 0; i < source->height; ++i) {
         for (int j = 0; j < source->width; ++j) {
-            e = matrix_setValue(*result, i, j, source->values[i][j]);
-            if (!error_isSuccess(e)) {
-                return e;
+            code = matrix_setValue(*result, i, j, source->values[i][j]);
+            if (!error_isSuccess(code)) {
+                return code;
             }
         }
     }
-    return e;
+    return code;
 }
 
 void matrix_destroy(PMatrix matrix) {
@@ -132,19 +132,19 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs) {
     if (lhs->height != rhs->height || lhs->width != rhs->width) {
         return ERROR_FAILURE_CONDITION;
     }
-    ErrorCode e = matrix_create(result, lhs->height, lhs->width);
-    if (!error_isSuccess(e)) {
-        return e;
+    ErrorCode code = matrix_create(result, lhs->height, lhs->width);
+    if (!error_isSuccess(code)) {
+        return code;
     }
     for (int i = 0; i < lhs->height; ++i) {
         for (int j = 0; j < lhs->width; ++j) {
-            e = matrix_setValue(*result, i, j, lhs->values[i][j] + rhs->values[i][j]);
-            if (!error_isSuccess(e)) {
-                return e;
+            code = matrix_setValue(*result, i, j, lhs->values[i][j] + rhs->values[i][j]);
+            if (!error_isSuccess(code)) {
+                return code;
             }
         }
     }
-    return e;
+    return code;
 }
 
 ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs) {
@@ -154,16 +154,16 @@ ErrorCode matrix_multiplyMatrices(PMatrix* result, CPMatrix lhs, CPMatrix rhs) {
     if (lhs->height != rhs->width) {
         return ERROR_FAILURE_CONDITION;
     }
-    ErrorCode e = matrix_create(result, lhs->height, rhs->width);
-    if (!error_isSuccess(e)) {
-        return e;
+    ErrorCode code = matrix_create(result, lhs->height, rhs->width);
+    if (!error_isSuccess(code)) {
+        return code;
     }
     for(int i = 0; i < lhs->height; ++i) {
 		for(int j = 0; j < rhs->width; ++j) {
 			for(int k = 0; k < lhs->width; ++k) {
-                e = matrix_setValue(*result, i, j, lhs->values[i][k] * rhs->values[k][j]);
-                if (!error_isSuccess(e)) {
-                return e;
+                code = matrix_setValue(*result, i, j, lhs->values[i][k] * rhs->values[k][j]);
+                if (!error_isSuccess(code)) {
+                return code;
                 }
 		    }
         }
@@ -177,9 +177,9 @@ ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar) {
     }
     for (int i = 0; i < matrix->height; ++i) {
         for (int j = 0; j < matrix->width; ++j) {
-            ErrorCode e = matrix_setValue(matrix, i, j, scalar*matrix->values[i][j]);
-            if (!error_isSuccess(e)) {
-                return e;
+            ErrorCode code = matrix_setValue(matrix, i, j, scalar*matrix->values[i][j]);
+            if (!error_isSuccess(code)) {
+                return code;
             }
         }
     }
