@@ -1,29 +1,20 @@
 
 #include "ErrorCode.h"
 
-
-/**
- * @brief Checks if a given error code indicates a success or not.
- *
- * @param[in] code the error code.
- * @return whether the error code indicates a success or not.
- */
 bool error_isSuccess(ErrorCode code) {
-    if (code == ERROR_SUCCESS) {
-        return true;
-    }
-    return false;
+    return code == ERROR_SUCCESS;
 }
 
-/**
- * @brief gets a textual error message for a given error code.
- *
- * @param[in] code the error code.
- * @return const char* the textual representation of the error code.
- */
-const char* error_getErrorMessage(ErrorCode code) {
+const char* error_getErrorMessage(const ErrorCode code) {
     if (error_isSuccess(code)) {
-    return "No error In the code";
+        return "No error In the code";
+    } else if (code == ERROR_FAILURE_NULL) {
+        return "Error in code - null variable";
+    } else if (code == ERROR_FAILURE_ALLOCATE) {
+        return "Error in code - could not allocate memory";
+    } else if (code == ERROR_FAILURE_CONDITION) {
+        return "Error in code - failed in a condition (out of boundary probably)";
+    } else {
+        return "Error in code - failed to set a value in a new matrix";  
     }
-    return "Error in the code";
 }
