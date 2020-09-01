@@ -32,19 +32,19 @@ ErrorCode matrix_create(PMatrix* matrix, uint32_t height, uint32_t width) {
         return ERROR_FAILURE_ALLOCATE;
     }
     
-    for (uint32_t i = 0; i < height; i++) {
+    for (uint32_t i = 0; i < height; ++i) {
         pm->values[i] = (double*)malloc(width * sizeof(double));
         if (pm->values[i] == NULL) {
-            for (int k = 0; k < i; k++) {
-                free(pm->values[k]);
+            for (int j = 0; j < i; ++j) {
+                free(pm->values[j]);
             }
             free(pm->values);
             free(pm);
 		    return ERROR_FAILURE_ALLOCATE;
         }
 	}
-        for (uint32_t i = 0; i < height; i++) {
-            for (uint32_t j = 0; j < width; j++) {
+        for (uint32_t i = 0; i < height; ++i) {
+            for (uint32_t j = 0; j < width; ++j) {
                 if (matrix_setValue(pm, i, j, 0) != ERROR_SUCCESS) {
                     return ERROR_FAILURE_VALUE;
                 }
@@ -61,8 +61,8 @@ ErrorCode matrix_copy(PMatrix* result, CPMatrix source) {
     if (!error_isSuccess(e)) {
         return e;
     }
-    for (int i = 0; i < source->height; i++) {
-        for (int j = 0; j < source->width; j++) {
+    for (int i = 0; i < source->height; ++i) {
+        for (int j = 0; j < source->width; ++j) {
             e = matrix_setValue(*result, i, j, source->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
@@ -76,7 +76,7 @@ void matrix_destroy(PMatrix matrix) {
     if (matrix == NULL) {
         return;
     }
-    for (int i = 0; i < matrix->height; i++) {
+    for (int i = 0; i < matrix->height; ++i) {
         free(matrix->values[i]);
     }
     free(matrix->values);
@@ -136,8 +136,8 @@ ErrorCode matrix_add(PMatrix* result, CPMatrix lhs, CPMatrix rhs) {
     if (!error_isSuccess(e)) {
         return e;
     }
-    for (int i = 0; i < lhs->height; i++) {
-        for (int j = 0; j < lhs->width; j++) {
+    for (int i = 0; i < lhs->height; ++i) {
+        for (int j = 0; j < lhs->width; ++j) {
             e = matrix_setValue(*result, i, j, lhs->values[i][j] + rhs->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
@@ -175,8 +175,8 @@ ErrorCode matrix_multiplyWithScalar(PMatrix matrix, double scalar) {
     if (matrix == NULL) {
         return ERROR_FAILURE_NULL;
     }
-    for (int i = 0; i < matrix->height; i++) {
-        for (int j = 0; j < matrix->width; j++) {
+    for (int i = 0; i < matrix->height; ++i) {
+        for (int j = 0; j < matrix->width; ++j) {
             ErrorCode e = matrix_setValue(matrix, i, j, scalar*matrix->values[i][j]);
             if (!error_isSuccess(e)) {
                 return e;
